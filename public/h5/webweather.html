@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css">
+		<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.9/css/weather-icons.min.css">
+
+	</head>
+
+	<style>
+		html {
+			height: 100%;
+			/*font-family: sans-serif;*/
+		}
+		
+		body {
+			/*边界看宽度默认为8,在这里初始值设为零*/
+			margin: 0;
+			/*高度100%,整个界面*/
+			height: 100%;
+			/*display: inline-block 转换为行内块元素*/
+			/*display: flex 将该标签作为弹性布局的容器*/
+			display: flex;
+			/*指定容器内的item布局方向*/
+			/*row 容器内的item按照x轴(主轴方向布局)*/
+			/*column 容器内的item按照y轴(交叉轴)方向布局*/
+			/*row-reverse 容器内的item按照x轴反向布局*/
+			/*column-reserve 容器内的item按照y轴反向布局*/
+			flex-direction: column;
+			/*文本居中*/
+			text-align: center;
+			/*设置背景图片*/
+			/*rgb() red green blue  取值0~255*/
+			/*rgba() red green blue alpha(取0~1)*/
+			/*设置背景色从rgb(14,105,189)到red值从上到下渐变*/
+			/*主轴项目item的布局方式*/
+			justify-content: space-between;
+			/*交叉轴的项目item布局方式*/
+			/*align-items: ;*/
+		}
+		
+		header {
+			/*字体大小*/
+			font-size: 30px;
+		}
+		
+		img {
+			/*width: 设置图片显示宽度，高度会自适应*/
+			width: 80px;
+		}
+		
+		footer {
+			/*display: flex 将该标签作为弹性布局的容器*/
+			display: flex;
+			/*设置item的布局方式*/
+			justify-content: space-between;
+		}
+		
+		.ui-block-a,
+		.ui-block-b,
+		.ui-block-c {
+			height: 100%;
+			text-align: center;
+			padding: 20px;
+		}
+		
+		#temp-div {
+			position: absolute;
+			width: 100%;
+			height: auto;
+			top: 50%;
+			transform: translateY(-50%);
+			-webkit-transform: translateY(-50%);
+			-webkit-perspective: 1000;
+			-webkit-transition: 0.75s ease-in-out;
+			transition: 0.75s ease-in-out;
+		}
+		
+		#icon-temp {
+			position: relative;
+			margin: 0 auto;
+			width: 100%;
+			text-align: Center;
+			font-size: 45px;
+			color: #fff;
+		}
+		
+		#current-temp-big {
+			position: relative;
+			display: inline-block;
+			width: 100%;
+			text-align: center;
+			color: #fff;
+		}
+		
+		#icon-temp p {
+			display: inline-block;
+			font-size: 30px;
+			max-width: 200px;
+		}
+		
+		#current-temp-big #ctb {
+			font-size: 70px;
+			font-weight: bold;
+		}
+		
+		#current-temp-big #ctbicon {
+			font-weight: 100;
+			font-size: 50px;
+			vertical-align: unset;
+		}
+		/*#top-menu-info {
+  position: absolute;
+  width: 100%;
+  height: 62px;
+  top: 0;
+  margin-top: 1px;
+}*/
+		
+		#top-menu-info #location {
+			position: relative;
+			text-align: center;
+			color: #fff;
+		}
+		
+		#top-menu-info #location i {
+			font-size: 22px;
+			-webkit-transform: translateY(-2px);
+			transform: translateY(-2px);
+		}
+		
+		#weather-menu ul {
+			display: block;
+			padding: 0px;
+			width: 100%;
+			height: auto;
+			opacity: 1;
+			list-style: none;
+			text-align: center;
+			-webkit-backface-visibility: hidden;
+			-webkit-transition: opacity .75s;
+			transition: opacity .75s;
+		}
+		
+		#weather-menu ul li {
+			overflow: hidden;
+			position: relative;
+			width: 100%;
+			min-height: 122px;
+			margin: 0px auto;
+			color: #fff;
+			-webkit-backface-visibility: hidden;
+			box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+			background: rgba(255, 255, 255, 0.15);
+		}
+		
+		#weather-menu ul li .li_title {
+			padding: 12px 0;
+			font-size: 15px;
+			width: 100%;
+			height: 8px;
+			line-height: 8px;
+			margin-bottom: 5px;
+			font-weight: 400;
+		}
+		
+		#weather-menu ul li #sunrise i,
+		#weather-menu ul li #sunset i,
+		#weather-menu ul li #totallight i,
+		#weather-menu ul li #humidity i,
+		#weather-menu ul li #pressure i,
+		#weather-menu ul li #visibility i,
+		#weather-menu ul li #chill i,
+		#weather-menu ul li #direction i,
+		#weather-menu ul li #speed i,
+		#weather-menu ul li .day10item i {
+			font-size: 26px;
+		}
+		
+		#weather-menu ul li .col-1,
+		#weather-menu ul li .col-2,
+		#weather-menu ul li .col-3 {
+			list-style: none;
+			display: inline-block;
+			width: 33%;
+			height: 72px;
+			margin: 0 auto;
+		}
+		
+		#weather-menu ul li .day_left {
+			left: -5px;
+		}
+		
+		#weather-menu ul li .day_right {
+			right: -5px;
+		}
+		
+		#weather-menu ul li .day_left,
+		#weather-menu ul li .day_right {
+			position: absolute;
+			width: 40px;
+			height: 40px;
+			top: 55px;
+			-webkit-transition: .3s;
+			transition: .3s;
+			z-index: 100;
+		}
+		
+		#weather-menu ul li .day_left i,
+		#weather-menu ul li .day_right i {
+			font-size: 28px;
+		}
+		
+		#weather-menu ul li .day_left:hover,
+		#weather-menu ul li .day_right:hover {
+			cursor: pointer;
+			text-shadow: 0 0 20px #ffffff;
+		}
+		
+		#weather-menu ul li #direction i {
+			font-size: 30px;
+		}
+		
+		#weather-menu ul li #sunrise span,
+		#weather-menu ul li #sunset span,
+		#weather-menu ul li #totallight span,
+		#weather-menu ul li #humidity span,
+		#weather-menu ul li #pressure span,
+		#weather-menu ul li #visibility span,
+		#weather-menu ul li #chill span,
+		#weather-menu ul li #direction span,
+		#weather-menu ul li #speed span,
+		#weather-menu ul li .day10item span {
+			display: list-item;
+			margin-top: 4px;
+			font-size: 14px;
+		}
+		
+		#btn-right {
+			top: 16px;
+			right: 5px;
+			margin-right: 15px;
+		}
+		
+		#btn-right:hover {
+			cursor: pointer;
+		}
+		
+		#btn-right {
+			position: absolute;
+			width: 26px;
+			height: 22px;
+			text-align: center;
+			text-decoration: none;
+			z-index: 5;
+			color: #fff;
+		}
+		
+		#btn-right span {
+			display: block;
+			position: absolute;
+			opacity: 1;
+			background: #fff;
+			-webkit-transition: .5s;
+			transition: .5s;
+		}
+		
+		#btn-right span:nth-child(n + 1):nth-child(-n + 4) {
+			width: 100%;
+			height: 3px;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+		}
+		
+		#btn-right span:nth-child(1) {
+			top: 0px;
+		}
+		
+		#btn-right span:nth-child(n + 2):nth-child(-n + 3) {
+			top: 8px;
+		}
+		
+		#btn-right span:nth-child(4) {
+			top: 16px;
+		}
+	</style>
+
+	<body>
+		<div data-role="page" id="pageone">
+			<div data-role="header">
+				<div id="top-menu-info">
+					<p id="location">
+						<i class="fa fa-map-marker" aria-hidden="true"></i>
+						<span>北京市</span> | <span>2018/11/24</span>
+					</p>
+				</div>
+				<span id="btn-right">
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				</span>
+			</div>
+
+			<div data-role="content" style="background: -webkit-linear-gradient(315deg, #c9ef87 -20%, #22ccb7 120%);background: linear-gradient(135deg, #c9ef87 -20%, #22ccb7 120%);">
+				<div>
+					<div id="icon-temp">
+
+						<p>多云</p>
+						<i class="wi wi-cloudy" aria-hidden="true"></i>
+					</div>
+					<p id="current-temp-big">
+						<span id="ctb">27~32</span>
+						<span id="ctbicon">°C</span>
+					</p>
+				</div>
+				<div id="weather-menu" style="box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
+
+					<ul>
+						<li id="atmli">
+							<p class="li_title">气候条件</p>
+							<div class="ui-grid-b">
+								<div id="humidity" class="ui-block-a">
+									<i class="wi wi-humidity" aria-hidden="true"></i>
+									<span>湿度 <br> <span id="hd">NaN</span></span>
+								</div>
+								<div id="pressure" class="ui-block-b">
+									<i class="wi wi-barometer" aria-hidden="true"></i>
+									<span>PM2.5 <br> <span id="pd">NaN</span></span>
+								</div>
+								<div id="visibility" class="ui-block-c">
+									<i class="wi wi-day-fog" aria-hidden="true"></i>
+									<span>能见度 <br>  <span id="vd">NaN</span></span>
+								</div>
+							</div>
+						</li>
+						<li id="sunli">
+							<p class="li_title">日出/日落</p>
+							<div class="ui-grid-b">
+								<div id="sunrise" class="ui-block-a">
+									<i class="wi wi-sunrise" aria-hidden="true"></i>
+									<span>日出 <br> <span id="srd">NaN</span></span>
+								</div>
+								<div id="totallight" class="ui-block-b">
+									<i class="wi wi-time-4" aria-hidden="true"></i>
+									<span>日光照射<br> <span id="td">NaN</span></span>
+								</div>
+								<div id="sunset" class="ui-block-c">
+									<i class="wi wi-sunset" aria-hidden="true"></i>
+									<span>日落 <br> <span id="ssd">NaN</span></span>
+								</div>
+							</div>
+						</li>
+						<li id="windli">
+							<p class="li_title">风条件</p>
+							<div class="ui-grid-b">
+								<div id="chill" class="ui-block-a">
+									<i class="wi wi-thermometer-exterior" aria-hidden="true"></i>
+									<span>寒冷 <br> <span id="cd">NaN</span></span>
+								</div>
+								<div id="direction" class="ui-block-b">
+									<i class="wi wi-direction-right" aria-hidden="true"></i>
+									<span>方向 <br> <span id="dd">NaN</span></span>
+								</div>
+								<div id="speed" class="ui-block-c">
+									<i class="wi wi-strong-wind" aria-hidden="true"></i>
+									<span>风速 <br> <span id="sd">NaN</span></span>
+								</div>
+							</div>
+						</li>
+						<li id="forecastli">
+							<p class="li_title">预测天气 </p>
+							<span class="day_left">
+									<i class="fa fa-chevron-left" aria-hidden="true"></i>
+								</span>
+							<span class="day_right">
+									<i class="fa fa-chevron-right" aria-hidden="true"></i>
+								</span>
+							<div class="ui-grid-b">
+								<div class="ui-block-a">
+									<section>
+										<i class="wi wi-day-sunny" aria-hidden="true"></i>
+										<span>星期二 <br>27~30℃</span>
+										<p>阴转小雨</p>
+										<p>南风微风</p>
+									</section>
+								</div>
+								<div class="ui-block-b">
+									<section>
+										<i class="wi wi-day-sunny" aria-hidden="true"></i>
+										<span>星期二 <br>27~30℃</span>
+										<p>阴转小雨</p>
+										<p>南风微风</p>
+									</section>
+								</div>
+								<div class="ui-block-c">
+									<section>
+										<i class="wi wi-day-sunny" aria-hidden="true"></i>
+										<span>星期二 <br>27~30℃</span>
+										<p>阴转小雨</p>
+										<p>南风微风</p>
+									</section>
+								</div>
+							</div>
+
+							<div id="dotmenu">
+								<span class="currentday"></span>
+								<span></span>
+								<span></span>
+							</div>
+						</li>
+					</ul>
+
+				</div>
+
+			</div>
+
+			<div data-role="footer">
+				<div data-role="navbar">
+					<ul>
+						<li>
+							<a href="#" data-icon="home">主页</a>
+						</li>
+						<li>
+							<a href="#" data-icon="gear">设置</a>
+						</li>
+						<li>
+							<a href="#" data-icon="info">联系我们</a>
+						</li>
+
+					</ul>
+				</div>
+			</div>
+
+	</body>
+
+</html>
